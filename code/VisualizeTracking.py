@@ -96,7 +96,7 @@ def main(args):
             offset=dataset.offset_BB,
             scale=dataset.scale_BB,
             normalize="PreTrained" in args.model_name)
-        ax = fig.add_subplot(111, projection='3d')
+        # ax = fig.add_subplot(111, projection='3d')
         # ax.scatter(model_pc[] ys, zs, marker=m)
         repeat_shape = np.ones(len(candidate_PCs_torch.shape), dtype=np.int32)
         repeat_shape[0] = len(candidate_PCs)
