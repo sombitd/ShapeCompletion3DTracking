@@ -65,6 +65,7 @@ def main(args):
 
     # Get List of PCs and BBs from dataset
     PCs, BBs, list_of_anno = dataset[args.track]
+    print("Length of candidates = ", len(dataset.search_grid) ," length of pointclouds in the tracklet", len(PCs))
 
     # Loop over Point Cloud and Bounding Boxes
     for i in tqdm(range(1, len(PCs))):
@@ -95,7 +96,8 @@ def main(args):
             offset=dataset.offset_BB,
             scale=dataset.scale_BB,
             normalize="PreTrained" in args.model_name)
-
+        ax = fig.add_subplot(111, projection='3d')
+        # ax.scatter(model_pc[] ys, zs, marker=m)
         repeat_shape = np.ones(len(candidate_PCs_torch.shape), dtype=np.int32)
         repeat_shape[0] = len(candidate_PCs)
         model_PC_encoded = regularizePC(model_PC, model).repeat(
@@ -265,14 +267,20 @@ def main(args):
             high=model_PC_decoded.points.shape[1],
             size=2048,
             dtype=np.int64)
+        print("Reconstructed size",model_PC_decoded.points.shape[1])
         # Scatter plot the point cloud
+        # ax.scatter(
+        #     model_PC_decoded.points[0, sample],
+        #     model_PC_decoded.points[1, sample],
+        #     model_PC_decoded.points[2, sample],
+        #     s=3,
+        #     c=model_PC_decoded.points[2, sample])
         ax.scatter(
-            model_PC_decoded.points[0, sample],
-            model_PC_decoded.points[1, sample],
-            model_PC_decoded.points[2, sample],
+            model_PC_decoded.points[0, :],
+            model_PC_decoded.points[1, :],
+            model_PC_decoded.points[2, :],
             s=3,
             c=model_PC_decoded.points[2, sample])
-
         # Plot the car BB
         order = [0, 4, 0, 1, 5, 1, 2, 6, 2, 3, 7, 3, 0, 4, 5, 6, 7, 4]
         ax.plot(
@@ -370,7 +378,7 @@ def main(args):
         ax.set_xlim(-2, 2)
         ax.set_ylim(-2, 2)
         ax.set_zlim(-1.5, 1.5)
-
+        ax.set_zlabel('Model')
         # Save figure as Model results
         os.makedirs(
             os.path.join(args.path_results, f"{args.track:04.0f}", "Model"),
@@ -448,7 +456,7 @@ if __name__ == '__main__':
         '--path_results',
         required=False,
         type=str,
-        default=os.path.join("..", "results"),
+        default=os.path.join("..", "resu"),
         help='path to save the results')
     parser.add_argument(
         '--path_KITTI',
